@@ -50,6 +50,30 @@ func (app *App) UserData() string {
 	}
 }
 
+func (app *App) SiteData() (path string) {
+	path, err := GetFolderPath(COMMON_APPDATA)
+
+	if err != nil {
+		return ""
+	}
+
+	if path, err = filepath.Abs(path); err != nil {
+		return ""
+	}
+
+	author := app.Author
+
+	if author == "" {
+		author = app.Name
+	}
+
+	if app.Name != "" {
+		return filepath.Join(path, author, app.Name)
+	} else {
+		return path
+	}
+}
+
 func GetFolderPath(csidl_const Csidl) (string, error) {
 	var buf = strings.Repeat("0", 1024)
 	cbuf, err := syscall.UTF16FromString(buf)
