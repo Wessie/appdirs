@@ -14,13 +14,14 @@ var (
 
 type Csidl uint
 
+// These are CSIDL constants that are passed to SHGetFolderPathW.
 const (
 	APPDATA        Csidl = 26
 	COMMON_APPDATA       = 35
 	LOCAL_APPDATA        = 28
 )
 
-func UserDataDir(name, author, version string, roaming bool) (path string) {
+func userDataDir(name, author, version string, roaming bool) (path string) {
 	if author == "" {
 		author = name
 	}
@@ -53,7 +54,7 @@ func UserDataDir(name, author, version string, roaming bool) (path string) {
 	return path
 }
 
-func SiteDataDir(name, author, version string) (path string) {
+func siteDataDir(name, author, version string) (path string) {
 	path, err := GetFolderPath(COMMON_APPDATA)
 
 	if err != nil {
@@ -79,15 +80,15 @@ func SiteDataDir(name, author, version string) (path string) {
 	return path
 }
 
-func UserConfigDir(name, author, version string, roaming bool) string {
+func userConfigDir(name, author, version string, roaming bool) string {
 	return UserDataDir(name, author, version, roaming)
 }
 
-func SiteConfigDir(name, author, version string) (path string) {
+func siteConfigDir(name, author, version string) (path string) {
 	return SiteDataDir(name, author, version)
 }
 
-func UserCacheDir(name, author, version string, opinion bool) (path string) {
+func userCacheDir(name, author, version string, opinion bool) (path string) {
 	if author == "" {
 		author = name
 	}
@@ -116,7 +117,7 @@ func UserCacheDir(name, author, version string, opinion bool) (path string) {
 	return path
 }
 
-func UserLogDir(name, author, version string, opinion bool) (path string) {
+func userLogDir(name, author, version string, opinion bool) (path string) {
 	path = UserDataDir(name, author, version, false)
 
 	if opinion {

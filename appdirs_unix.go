@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 )
 
-func UserDataDir(name, author, version string, roaming bool) (path string) {
+func userDataDir(name, author, version string, roaming bool) (path string) {
 	if path = os.Getenv("XDG_DATA_HOME"); path == "" {
 		path = ExpandUser("~/.local/share")
 	}
@@ -41,11 +41,11 @@ func SiteDataDirs(name, author, version string) (paths []string) {
 	return paths
 }
 
-func SiteDataDir(name, author, version string) (path string) {
+func siteDataDir(name, author, version string) (path string) {
 	return SiteDataDirs(name, author, version)[0]
 }
 
-func UserConfigDir(name, author, version string, roaming bool) (path string) {
+func userConfigDir(name, author, version string, roaming bool) (path string) {
 	if path = os.Getenv("XDG_CONFIG_HOME"); path == "" {
 		path = ExpandUser("~/.config")
 	}
@@ -79,11 +79,11 @@ func SiteConfigDirs(name, author, version string) (paths []string) {
 	return paths
 }
 
-func SiteConfigDir(name, author, version string) (path string) {
+func siteConfigDir(name, author, version string) (path string) {
 	return SiteConfigDirs(name, author, version)[0]
 }
 
-func UserCacheDir(name, author, version string, opinion bool) (path string) {
+func userCacheDir(name, author, version string, opinion bool) (path string) {
 	if path = os.Getenv("XDG_CACHE_HOME"); path == "" {
 		path = ExpandUser("~/.cache")
 	}
@@ -95,7 +95,7 @@ func UserCacheDir(name, author, version string, opinion bool) (path string) {
 	return path
 }
 
-func UserLogDir(name, author, version string, opinion bool) (path string) {
+func userLogDir(name, author, version string, opinion bool) (path string) {
 	path = UserCacheDir(name, author, version, opinion)
 
 	return filepath.Join(path, "log")
