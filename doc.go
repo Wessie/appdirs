@@ -12,15 +12,17 @@ directory you need. This is a port of it to Go.
 Depending on platform, this package exports you at the least 6 functions that
 return various system directories. And one helper struct type that combines the
 functions into methods for less arguments in your code.
+
+Each function defined accepts a number of arguments, each argument is optional
+and can be left to the types default value if omitted. Often the function will
+ignore arguments if the name given is empty.
+
+Passing in all default values into any of the functions will return you the base
+directory without any of the arguments appended to it.
 */
 package appdirs
 
 // UserDataDir returns the full path to the user-specific data directory.
-//
-//		"name" is the name of the application.
-//		"author" is the name of the application author or company.
-//		"version" is an optional version number.
-//		"roaming" is windows specific, this uses the roaming appdata directory when set.
 //
 // This function uses XDG_DATA_HOME as defined by the XDG spec on *nix like systems.
 //
@@ -36,10 +38,6 @@ func UserDataDir(name, author, version string, roaming bool) string {
 }
 
 // SiteDataDir returns the full path to the user-shared data directory.
-//
-//		"name" is the name of the application.
-//		"author" is the name of the application author or company.
-//		"version" is an optional version number.
 //
 // This function uses XDG_DATA_DIRS[0] as by the XDG spec on *nix like systems.
 //
@@ -57,11 +55,6 @@ func SiteDataDir(name, author, version string) string {
 
 // UserConfigDir returns the full path to the user-specific configuration directory
 //
-//		"name" is the name of the application.
-//		"author" is the name of the application author or company.
-//		"version" is an optional version number.
-//		"roaming" is windows specific, this uses the roaming appdata directory when set.
-//
 // This function uses XDG_CONFIG_HOME as by the XDG spec on *nix like systems.
 //
 // Examples of return values:
@@ -73,10 +66,6 @@ func UserConfigDir(name, author, version string, roaming bool) string {
 }
 
 // SiteConfigDir returns the full path to the user-shared data directory.
-//
-//		"name" is the name of the application.
-//		"author" is the name of the application author or company.
-//		"version" is an optional version number.
 //
 // This function uses XDG_CONFIG_DIRS[0] as by the XDG spec on *nix like systems.
 //
@@ -93,12 +82,7 @@ func SiteConfigDir(name, author, version string) string {
 
 // UserCacheDir returns the full path to the user-specific cache directory.
 //
-//		"name" is the name of the application.
-//		"author" is the name of the application author or company.
-//		"version" is an optional version number.
-//		"opinion" can be set to 'true' to append "Cache" to the base directory, or
-//			'false' to omit it. (See the original python appdata documentation for
-//			the reasons behind supporting this.)
+// The opinion argument will append 'Cache' to the base directory if set to true.
 //
 // Examples of return values:
 //		Mac OS X: ~/Library/Caches/<AppName>
@@ -111,12 +95,8 @@ func UserCacheDir(name, author, version string, opinion bool) string {
 
 // UserLogDir returns the full path to the user-specific log directory.
 //
-//		"name" is the name of the application.
-//		"author" is the name of the application author or company.
-//		"version" is an optional version number.
-//		"opinion" can be set to 'true' to append "Logs" (windows) or "log" (unix) to
-//			the base directory, or 'false' to omit it. (See the original python
-//			appdata documentation for the reasons behind supporting this.)
+// The opinion argument will append either 'Logs' (windows) or 'log' (unix) to
+// the base directory when set to true.
 //
 // Examples of return values:
 //		Mac OS X: ~/Library/Logs/<AppName>
