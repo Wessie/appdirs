@@ -17,11 +17,10 @@ package appdirs
 
 // UserDataDir returns the full path to the user-specific data directory.
 //
-// "name" is the name of the application.
-// "author" is the name of the application author or company.
-// "version" is an optional version number.
-// "roaming" is windows specific, this uses the roaming appdata directory when
-//			 set. Otherwise the non-roaming directory is used.
+//		"name" is the name of the application.
+//		"author" is the name of the application author or company.
+//		"version" is an optional version number.
+//		"roaming" is windows specific, this uses the roaming appdata directory when set.
 //
 // This function uses XDG_DATA_HOME as defined by the XDG spec on *nix like systems.
 //
@@ -38,9 +37,9 @@ func UserDataDir(name, author, version string, roaming bool) string {
 
 // SiteDataDir returns the full path to the user-shared data directory.
 //
-// "name" is the name of the application.
-// "author" is the name of the application author or company.
-// "version" is an optional version number.
+//		"name" is the name of the application.
+//		"author" is the name of the application author or company.
+//		"version" is an optional version number.
 //
 // This function uses XDG_DATA_DIRS[0] as by the XDG spec on *nix like systems.
 //
@@ -58,11 +57,10 @@ func SiteDataDir(name, author, version string) string {
 
 // UserConfigDir returns the full path to the user-specific configuration directory
 //
-// "name" is the name of the application.
-// "author" is the name of the application author or company.
-// "version" is an optional version number.
-// "roaming" is windows specific, this uses the roaming appdata directory when
-//			 set. Otherwise the non-roaming directory is used.
+//		"name" is the name of the application.
+//		"author" is the name of the application author or company.
+//		"version" is an optional version number.
+//		"roaming" is windows specific, this uses the roaming appdata directory when set.
 //
 // This function uses XDG_CONFIG_HOME as by the XDG spec on *nix like systems.
 //
@@ -76,9 +74,9 @@ func UserConfigDir(name, author, version string, roaming bool) string {
 
 // SiteConfigDir returns the full path to the user-shared data directory.
 //
-// "name" is the name of the application.
-// "author" is the name of the application author or company.
-// "version" is an optional version number.
+//		"name" is the name of the application.
+//		"author" is the name of the application author or company.
+//		"version" is an optional version number.
 //
 // This function uses XDG_CONFIG_DIRS[0] as by the XDG spec on *nix like systems.
 //
@@ -95,12 +93,12 @@ func SiteConfigDir(name, author, version string) string {
 
 // UserCacheDir returns the full path to the user-specific cache directory.
 //
-// "name" is the name of the application.
-// "author" is the name of the application author or company.
-// "version" is an optional version number.
-// "opinion" can be set to 'true' to append "Cache" to the base directory, or
-//		'false' to omit it. (See the original python appdata documentation for
-//		the reasons behind supporting this.)
+//		"name" is the name of the application.
+//		"author" is the name of the application author or company.
+//		"version" is an optional version number.
+//		"opinion" can be set to 'true' to append "Cache" to the base directory, or
+//			'false' to omit it. (See the original python appdata documentation for
+//			the reasons behind supporting this.)
 //
 // Examples of return values:
 //		Mac OS X: ~/Library/Caches/<AppName>
@@ -113,12 +111,12 @@ func UserCacheDir(name, author, version string, opinion bool) string {
 
 // UserLogDir returns the full path to the user-specific log directory.
 //
-// "name" is the name of the application.
-// "author" is the name of the application author or company.
-// "version" is an optional version number.
-// "opinion" can be set to 'true' to append "Logs" (windows) or "log" (unix) to
-//		the base directory, or 'false' to omit it. (See the original python
-//		appdata documentation for the reasons behind supporting this.)
+//		"name" is the name of the application.
+//		"author" is the name of the application author or company.
+//		"version" is an optional version number.
+//		"opinion" can be set to 'true' to append "Logs" (windows) or "log" (unix) to
+//			the base directory, or 'false' to omit it. (See the original python
+//			appdata documentation for the reasons behind supporting this.)
 //
 // Examples of return values:
 //		Mac OS X: ~/Library/Logs/<AppName>
