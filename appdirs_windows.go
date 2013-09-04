@@ -20,15 +20,13 @@ const (
 	LOCAL_APPDATA        = 28
 )
 
-func (app *App) UserData() (path string) {
-	author := app.Author
-
+func UserDataDir(name, author, version string, roaming bool) (path string) {
 	if author == "" {
-		author = app.Name
+		author = name
 	}
 
 	var csidl Csidl
-	if app.Roaming {
+	if roaming {
 		csidl = APPDATA
 	} else {
 		csidl = LOCAL_APPDATA
@@ -44,14 +42,18 @@ func (app *App) UserData() (path string) {
 		return ""
 	}
 
-	if app.Name != "" {
-		path = filepath.Join(path, author, app.Name)
+	if name != "" {
+		path = filepath.Join(path, author, name)
+	}
+
+	if name != "" && version != "" {
+		path = filepath.Join(path, version)
 	}
 
 	return path
 }
 
-func (app *App) SiteData() (path string) {
+func SiteDataDir(name, author, version string) (path string) {
 	path, err := GetFolderPath(COMMON_APPDATA)
 
 	if err != nil {
@@ -62,38 +64,32 @@ func (app *App) SiteData() (path string) {
 		return ""
 	}
 
-	author := app.Author
-
 	if author == "" {
-		author = app.Name
+		author = name
 	}
 
-	if app.Name != "" {
-		path = filepath.Join(path, author, app.Name)
+	if name != "" {
+		path = filepath.Join(path, author, name)
+	}
+
+	if name != "" && version != "" {
+		path = filepath.Join(path, version)
 	}
 
 	return path
 }
 
-func (app *App) UserConfig() string {
-	return app.UserData()
+func UserConfigDir(name, author, version string, roaming bool) string {
+	return UserDataDir(name, author, version, roaming)
 }
 
-func (app *App) SiteConfig() (path string) {
-	path = app.SiteData()
-
-	if app.Name != "" && app.Version != "" {
-		path = filepath.Join(path, app.Version)
-	}
-
-	return path
+func SiteConfigDir(name, author, version string) (path string) {
+	return SiteDataDir(name, author, version)
 }
 
-func (app *App) UserCache() (path string) {
-	author := app.Author
-
+func UserCacheDir(name, author, version string, opinion bool) (path string) {
 	if author == "" {
-		author = app.Name
+		author = name
 	}
 
 	path, err := GetFolderPath(LOCAL_APPDATA)
@@ -106,20 +102,24 @@ func (app *App) UserCache() (path string) {
 		return ""
 	}
 
-	if app.Name != "" {
-		path = filepath.Join(path, author, app.Name)
-		if app.Opinion {
+	if name != "" {
+		path = filepath.Join(path, author, name)
+		if opinion {
 			path = filepath.Join(path, "Cache")
 		}
+	}
+
+	if name != "" && version != "" {
+		path = filepath.Join(path, version)
 	}
 
 	return path
 }
 
-func (app *App) UserLog() (path string) {
-	path = app.UserData()
+func UserLogDir(name, author, version string, opinion bool) (path string) {
+	path = UserDataDir(name, author, version, false)
 
-	if app.Opinion {
+	if opinion {
 		path = filepath.Join(path, "Logs")
 	}
 
