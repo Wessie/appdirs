@@ -8,4 +8,20 @@ type App struct {
 	Version   string
 	Roaming   bool
 	MultiPath bool
+	Opinion   bool
+}
+
+// Return a new App struct, this uses the following defaults for the parameters
+// not applicable in New.
+//
+// Roaming: false, MultiPath: false, Opinion: true
+func New(name, author, version string) *App {
+	return &App{
+		Name:      name,
+		Author:    author,
+		Version:   version,
+		Roaming:   false,
+		MultiPath: false,
+		Opinion:   true,
+	}
 }
