@@ -14,7 +14,6 @@ func userDataDir(name, author, version string, roaming bool) (path string) {
 	if name != "" && version != "" {
 		path = filepath.Join(path, version)
 	}
-
 	return path
 }
 
@@ -28,7 +27,6 @@ func siteDataDir(name, author, version string) (path string) {
 	if name != "" && version != "" {
 		path = filepath.Join(path, version)
 	}
-
 	return path
 }
 
@@ -37,7 +35,7 @@ func userConfigDir(name, author, version string, roaming bool) (path string) {
 }
 
 func siteConfigDir(name, author, version string) (path string) {
-	return SiteDataDir(name, author, version, false)
+	return SiteDataDir(name, author, version)
 }
 
 func userCacheDir(name, author, version string, opinion bool) (path string) {
@@ -50,7 +48,6 @@ func userCacheDir(name, author, version string, opinion bool) (path string) {
 	if name != "" && version != "" {
 		path = filepath.Join(path, version)
 	}
-
 	return path
 }
 
@@ -62,4 +59,5 @@ func userLogDir(name, author, version string, opinion bool) (path string) {
 	if name != "" && version != "" {
 		path = filepath.Join(path, version)
 	}
+	return path
 }
