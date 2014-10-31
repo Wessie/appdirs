@@ -2,23 +2,38 @@ package appdirs
 
 import (
 	"path/filepath"
-	"strings"
 	"syscall"
 	"unsafe"
 )
 
 var (
-	shell32, _        = syscall.LoadLibrary("shell32.dll")
-	getFolderPathW, _ = syscall.GetProcAddress(shell32, "SHGetFolderPathW")
+	shell32, _            = syscall.LoadLibrary("shell32.dll")
+	getKnownFolderPath, _ = syscall.GetProcAddress(shell32, "SHGetKnownFolderPath")
+
+	ole32, _         = syscall.LoadLibrary("Ole32.dll")
+	coTaskMemFree, _ = syscall.GetProcAddress(ole32, "CoTaskMemFree")
 )
 
-type Csidl uint
-
-// These are CSIDL constants that are passed to SHGetFolderPathW.
-const (
-	APPDATA        Csidl = 26
-	COMMON_APPDATA       = 35
-	LOCAL_APPDATA        = 28
+// These are KNOWNFOLDERID constants that are passed to GetKnownFolderPath
+var (
+	rfidLocalAppData = syscall.GUID{
+		0xf1b32785,
+		0x6fba,
+		0x4fcf,
+		[8]byte{0x9d, 0x55, 0x7b, 0x8e, 0x7f, 0x15, 0x70, 0x91},
+	}
+	rfidRoamingAppData = syscall.GUID{
+		0x3eb685db,
+		0x65f9,
+		0x4cf6,
+		[8]byte{0xa0, 0x3a, 0xe3, 0xef, 0x65, 0x72, 0x9f, 0x3d},
+	}
+	rfidProgramData = syscall.GUID{
+		0x62ab5d82,
+		0xfdc1,
+		0x4dc3,
+		[8]byte{0xa9, 0xdd, 0x07, 0x0d, 0x1d, 0x49, 0x5d, 0x97},
+	}
 )
 
 func userDataDir(name, author, version string, roaming bool) (path string) {
@@ -26,14 +41,14 @@ func userDataDir(name, author, version string, roaming bool) (path string) {
 		author = name
 	}
 
-	var csidl Csidl
+	var rfid syscall.GUID
 	if roaming {
-		csidl = APPDATA
+		rfid = rfidRoamingAppData
 	} else {
-		csidl = LOCAL_APPDATA
+		rfid = rfidLocalAppData
 	}
 
-	path, err := GetFolderPath(csidl)
+	path, err := getFolderPath(rfid)
 
 	if err != nil {
 		return ""
@@ -55,7 +70,7 @@ func userDataDir(name, author, version string, roaming bool) (path string) {
 }
 
 func siteDataDir(name, author, version string) (path string) {
-	path, err := GetFolderPath(COMMON_APPDATA)
+	path, err := getFolderPath(rfidProgramData)
 
 	if err != nil {
 		return ""
@@ -93,7 +108,7 @@ func userCacheDir(name, author, version string, opinion bool) (path string) {
 		author = name
 	}
 
-	path, err := GetFolderPath(LOCAL_APPDATA)
+	path, err := getFolderPath(rfidLocalAppData)
 
 	if err != nil {
 		return ""
@@ -127,31 +142,30 @@ func userLogDir(name, author, version string, opinion bool) (path string) {
 	return path
 }
 
-// A helper function to receive a CSIDL folder from windows. This is exported
-// for package users for if they will want to receive a different CSIDL folder
-// than the ones we support.
-func GetFolderPath(csidl_const Csidl) (string, error) {
-	var buf = strings.Repeat("0", 1024)
-	cbuf, err := syscall.UTF16FromString(buf)
-	if err != nil {
-		return "", err
-	}
+func getFolderPath(rfid syscall.GUID) (string, error) {
+	var res uintptr
 
 	ret, _, callErr := syscall.Syscall6(
-		uintptr(getFolderPathW),
-		5,                    // The amount of arguments we have
-		0,                    // Reserved argument, does nothing
-		uintptr(csidl_const), // CSIDL value identifier
-		0,                    // Access token, almost always 0
-		0,                    // Flag to specify the path to be returned
-		// null-terminated string to put the output in
-		uintptr(unsafe.Pointer(&cbuf[0])),
-		0, // Filler argument to syscall6, always 0
+		uintptr(getKnownFolderPath),
+		4,
+		uintptr(unsafe.Pointer(&rfid)),
+		0,
+		0,
+		uintptr(unsafe.Pointer(&res)),
+		0,
+		0,
 	)
 
 	if callErr != 0 && ret != 0 {
 		return "", callErr
 	}
 
-	return syscall.UTF16ToString(cbuf), nil
+	defer syscall.Syscall(uintptr(coTaskMemFree), 1, res, 0, 0)
+	return ucs2PtrToString(res), nil
+}
+
+func ucs2PtrToString(p uintptr) string {
+	ptr := (*[4096]uint16)(unsafe.Pointer(p))
+
+	return syscall.UTF16ToString((*ptr)[:])
 }
